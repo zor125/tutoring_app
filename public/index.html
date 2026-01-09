@@ -4,16 +4,22 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>과외 자동 기록지</title>
-        <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <h1>과외 자동 기록지</h1>
         <P>버튼을 클릭하고 말하기 시작하세요</P>
         <button id="recording-button">녹음 시작</button>
+        <button id="summary-button" disabled>요약하기</button>
         <div id="transcription-result"></div>
         <p id = "error-message" hidden aria-hidden="true">
             Button was removed<br>Your browser doesn't support Speech Recognition with
         </p>
+
+        
+        <pre id="summary-result"></pre>
+
+
         <script src="speech-api.js"></script>
     </body>
 </html>

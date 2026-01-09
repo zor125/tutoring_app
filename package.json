@@ -1,0 +1,27 @@
+{
+  "name": "tutoring_app",
+  "version": "1.0.0",
+  "description": "이번엔 진짜로 만들겁니다",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zor125/tutoring_app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/zor125/tutoring_app/issues"
+  },
+  "homepage": "https://github.com/zor125/tutoring_app#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "openai": "^6.15.0"
+  }
+}
