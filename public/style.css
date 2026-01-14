@@ -29,6 +29,28 @@ body {
 
     color : #000000;
 }
+
+#summary-result {
+    width: 80%;
+    max-width : 600px;
+
+    min-height : 150px;
+    padding : 1em;
+    margin : 0 auto;
+
+    border : 1px solid #ddd;
+    border-radius : 12px;
+    background-color : #f1f1f1;
+
+    white-space: pre-wrap;
+    line-height : 1em;
+    font-size : 18px;
+    text-align:left;
+
+    overflow-y:auto ;
+    color : #4a4a4a;
+}
+
 #error-message {
     color : #ff0000;
 }
