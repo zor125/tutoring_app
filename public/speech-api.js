@@ -1,4 +1,13 @@
 window.addEventListener("DOMContentLoaded", () => {
+  const prettifySummary = (md) => {
+  return md
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/^###\s+(.+)$/gm, "【$1】")
+    .replace(/^####\s+(.+)$/gm, "  - $1")
+    .replace(/^- /gm, "• ")
+    .replace(/^---$/gm, "────────────")
+    .trim();
+  };
   const recordingButton = document.getElementById("recording-button");
   const transcriptionResult = document.getElementById("transcription-result");
   const summaryButton = document.getElementById("summary-button");
@@ -107,7 +116,9 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         const data = await res.json();
-        summaryResult.textContent = data.summary ?? "(요약 결과가 비어있음)";
+        summaryResult.value = prettifySummary(
+          data.summary ?? "(요약 결과가 비어있음)"
+        );
         pdfButton.disabled = false;
       } catch (err) {
         summaryResult.textContent = "에러: " + (err?.message || String(err));
@@ -120,7 +131,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     const onPdfClick = async () => {
-      const summaryText = (summaryResult?.textContent || "").trim();
+      const summaryText = (summaryResult?.value || "").trim();
       if (!summaryText) {
         alert("PDF로 만들 요약 내용이 없습니다.");
         return;

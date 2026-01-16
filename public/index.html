@@ -8,13 +8,18 @@
     </head>
     <body>
         <h1>과외 자동 기록지</h1>
-        <P>버튼을 클릭하고 말하기 시작하세요</P>
+        <P>버튼을 클릭하고 말하기 시작하세요.</P>
+        <P>녹음이 진행되는 동안, 아래 영역에 전사 내용이 실시간으로 표시됩니다.</P>
+        <P>전사 내용이 준비되면 요약하고 PDF로 저장할 수 있습니다.</P>
+        <P>요약된 내용은 수정이 가능합니다.</P>
         <button id="recording-button">녹음 시작</button>
         <button id="summary-button" disabled>요약하기</button>
         <button id="pdf-button" disabled>PDF로 저장</button>
-        <div id="transcription-result"></div>
-        <div id= "summary-result" aria-live="polite"></div>
-        <p id = "error-message" hidden aria-hidden="true">
+        <div class="content-wrap">
+          <div id="transcription-result"></div>
+          <textarea id="summary-result" aria-live="polite"></textarea>
+        </div>
+         <p id = "error-message" hidden aria-hidden="true">
             Button was removed<br>Your browser doesn't support Speech Recognition with
         </p>
 
