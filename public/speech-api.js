@@ -3,7 +3,9 @@ window.addEventListener("DOMContentLoaded", () => {
   const transcriptionResult = document.getElementById("transcription-result");
   const summaryButton = document.getElementById("summary-button");
   const summaryResult = document.getElementById("summary-result");
+  const pdfButton = document.getElementById("pdf-button");
 
+  if (pdfButton) pdfButton.disabled = true;
   if (summaryButton) summaryButton.disabled = true;
 
   let isRecording = false;
@@ -106,6 +108,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         const data = await res.json();
         summaryResult.textContent = data.summary ?? "(요약 결과가 비어있음)";
+        pdfButton.disabled = false;
       } catch (err) {
         summaryResult.textContent = "에러: " + (err?.message || String(err));
       } finally {
@@ -116,12 +119,45 @@ window.addEventListener("DOMContentLoaded", () => {
       }
     };
 
+    const onPdfClick = async () => {
+      const summaryText = (summaryResult?.textContent || "").trim();
+      if (!summaryText) {
+        alert("PDF로 만들 요약 내용이 없습니다.");
+        return;
+      }
 
+      try {
+        const res = await fetch("/api/pdf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: summaryText }),
+        });
+
+        if (!res.ok) {
+          const msg = await res.text();
+          throw new Error(`PDF 생성 실패 (status ${res.status}): ${msg}`);
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "과외기록지.pdf";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        URL.revokeObjectURL(url);
+        } catch (e) {
+        alert(e.message);
+        }
+      };
 
     recognition.addEventListener("result", onResult);
     recordingButton.addEventListener("click", onClick);
     if (summaryButton) summaryButton.addEventListener("click", onSummaryClick);
-
+    if (pdfButton) pdfButton.addEventListener("click", onPdfClick);
 
   } else {
     recordingButton.remove();

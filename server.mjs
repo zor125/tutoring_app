@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import OpenAI from "openai";
+import PDFDocument from "pdfkit";
 
 dotenv.config();
 
@@ -126,10 +127,39 @@ ${script}
   }
 });
 
+app.post("/api/pdf", (req, res) => {
+  try {
+    const text = (req.body?.text || "").trim();
+    if (!text) return res.status(400).send("text가 비어있음");
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'attachment; filename="tutoring.pdf"');
+
+    const doc = new PDFDocument({ margin: 50 });
+
+    doc.font("fonts/NotoSansKR-Regular.ttf");
+    
+    doc.pipe(res);
+
+    doc.fontSize(18).text("과외 기록지", { align: "center" });
+    doc.moveDown();
+
+    doc.fontSize(11).text(text, {
+      align: "left",
+      lineGap: 4,
+    });
+
+    doc.end();
+  } catch (e) {
+    console.error(e);
+    res.status(500).send(e?.message || "PDF 생성 서버 에러");
+  }
+});
+
 app.listen(5500, () => {
   console.log("Server running: http://localhost:5500");
 });
 
 
-//node server.js
+//node server.mjs
 //서버 실행 명령어
