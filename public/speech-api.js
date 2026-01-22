@@ -1,4 +1,5 @@
 window.addEventListener("DOMContentLoaded", () => {
+  const track = (...args) => window.track?.(...args); // track이 없으면 그냥 무시
   const prettifySummary = (md) => {
   return md
     .replace(/\*\*(.+?)\*\*/g, "$1")
@@ -22,6 +23,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
 
   let finalLines = [];
+  let transcriptionReadyLogged = false;
+
 
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -32,6 +35,19 @@ window.addEventListener("DOMContentLoaded", () => {
     recognition.interimResults = true;
 
     recognition.lang = "ko-KR";
+
+    recognition.addEventListener("start", () => {
+      track("recording_started");
+    });
+
+    recognition.addEventListener("error", (e) => {
+      track("recording_failed", { error: e?.error || "unknown" });
+    });
+
+    recognition.addEventListener("end", () => {
+      track("recording_ended", { final_lines: finalLines.length });
+    });
+
 
     const renderTranscript = (interimText = "") => {
       transcriptionResult.innerHTML = "";
@@ -71,6 +87,11 @@ window.addEventListener("DOMContentLoaded", () => {
         }
       }
 
+            // ✅ 전사가 처음으로 "확정(final)" 텍스트를 확보한 순간
+      if (!transcriptionReadyLogged && finalLines.length > 0) {
+        transcriptionReadyLogged = true;
+        track("transcription_ready", { lines: finalLines.length });
+      }
       renderTranscript(interim);
     };
 
@@ -119,8 +140,12 @@ window.addEventListener("DOMContentLoaded", () => {
         summaryResult.value = prettifySummary(
           data.summary ?? "(요약 결과가 비어있음)"
         );
+
+        track("summary_created", { lines: finalLines.length });
+        
         pdfButton.disabled = false;
       } catch (err) {
+        track("summary_failed", { message: err?.message || String(err) });
         summaryResult.textContent = "에러: " + (err?.message || String(err));
       } finally {
         isSummarizing = false;
@@ -138,6 +163,7 @@ window.addEventListener("DOMContentLoaded", () => {
       }
 
       try {
+        const t0 = performance.now();
         const res = await fetch("/api/pdf", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -150,6 +176,11 @@ window.addEventListener("DOMContentLoaded", () => {
         }
 
         const blob = await res.blob();
+        track("pdf_created", {
+          size_bytes: blob.size,
+          duration_ms: Math.round(performance.now() - t0)
+        });
+
         const url = URL.createObjectURL(blob);
 
         const a = document.createElement("a");
@@ -161,6 +192,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
         URL.revokeObjectURL(url);
         } catch (e) {
+        track("pdf_failed", { message: e?.message || String(e) });
         alert(e.message);
         }
       };

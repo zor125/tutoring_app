@@ -24,5 +24,20 @@
         </p>
 
         <script src="speech-api.js"></script>
+
+        <script type="module">
+            import { track } from "./track.js";
+            window.track = track;
+
+            track("session_start");
+
+            const recordBtn = document.getElementById("recording-button");
+            const summaryBtn = document.getElementById("summary-button");
+            const pdfBtn = document.getElementById("pdf-button");
+
+            recordBtn?.addEventListener("click", () => track("recording_click"));
+            summaryBtn?.addEventListener("click", () => track("summary_click"));
+            pdfBtn?.addEventListener("click", () => track("pdf_click"));
+        </script>   
     </body>
 </html>

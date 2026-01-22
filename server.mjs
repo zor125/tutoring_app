@@ -171,3 +171,4 @@ app.listen(5500, () => {
 
 //node server.mjs
 //서버 실행 명령어
+//ngrok http 5500
